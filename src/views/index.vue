@@ -2,7 +2,8 @@
 import type { Movie, MoviesData, MovieTypeData } from '~/types/movie';
 import moviedbApi from '~/services/moviedbApi';
 
-const { y } = useWindowScroll();
+const { y: scrollY } = useWindowScroll();
+const { height: windowHeight } = useWindowSize();
 const isFetching = ref(false);
 const moviesData = ref<MoviesData | undefined>(undefined);
 const movies = ref<Movie[]>([]);
@@ -34,11 +35,11 @@ const selectedMovieLabel = computed(() => movieTypesData.value.find(movieType =>
 
 onMounted(async () => {
   await getMoviesData('now_playing');
-  window.addEventListener('scroll', async () => await loadMoreMovies());
+  useEventListener(window, 'scroll', async () => await loadMoreMovies());
 });
 
 async function loadMoreMovies() {
-  if ((window.innerHeight + y.value) >= document.body.offsetHeight - 32) {
+  if ((windowHeight.value + scrollY.value) >= document.body.offsetHeight - 32) {
     const movieTypeValue = movieTypeSelect.value?.value ?? 'now_playing';
     const language = movieTypeSelect.value?.value ?? 'en-US';
     const page = moviesData.value?.page ? moviesData.value.page + 1 : 1;
