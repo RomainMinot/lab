@@ -11,6 +11,7 @@ declare module 'vue' {
     AppBadge: typeof import('./src/components/AppBadge.vue')['default']
     AppButton: typeof import('./src/components/AppButton.vue')['default']
     AppCard: typeof import('./src/components/AppCard.vue')['default']
+    AppSpinnerLoader: typeof import('./src/components/AppSpinnerLoader.vue')['default']
     Card: typeof import('./src/components/Card.vue')['default']
     CardSubtext: typeof import('./src/components/card/Subtext.vue')['default']
     CardText: typeof import('./src/components/card/Text.vue')['default']

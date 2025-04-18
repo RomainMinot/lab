@@ -16,6 +16,17 @@ interface Movie {
   runtime: number;
 }
 
+interface MoviesData {
+  dates?: {
+    maximum: string;
+    minimum: string;
+  };
+  page: number;
+  results: Movie[];
+  total_pages: number;
+  total_results: number;
+}
+
 interface CreditsItem {
   id: number;
   name: string;
@@ -31,4 +42,4 @@ interface MovieTypeData {
   selected: boolean;
 }
 
-export { CreditsItem, Genre, Movie, MovieTypeData };
+export { CreditsItem, Genre, Movie, MoviesData, MovieTypeData };

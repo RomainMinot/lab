@@ -11,7 +11,7 @@ const detailsRoute = computed(() => `/movies/${props.movie.id}`);
 const posterUrl = computed(() => getPosterUrl(props.movie.backdrop_path));
 const posterAlt = computed(() => `${props.movie.original_title} poster`);
 const voteAverage = computed(() => getVoteAverageDisplay(props.movie.vote_average));
-const genres: Ref<Genre[]> = ref([]);
+const genres = ref<Genre[]>([]);
 
 onMounted(async () => {
   genres.value = await getGenres(props.movie.genre_ids);

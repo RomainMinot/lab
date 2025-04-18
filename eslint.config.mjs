@@ -5,6 +5,6 @@ export default antfu({
     indent: 2,
     quotes: 'single',
     semi: true,
-    ifNewline: false,
+    curlyNewline: false,
   },
 });
