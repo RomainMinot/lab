@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import type { MoviesData, MovieTypeData } from '~/types/movie';
+import type { Movie, MoviesData, MovieTypeData } from '~/types/movie';
 import moviedbApi from '~/services/moviedbApi';
 
+const { y } = useWindowScroll();
 const isFetching = ref(false);
 const moviesData = ref<MoviesData | undefined>(undefined);
-const movies = computed(() => moviesData.value?.results && moviesData.value.results.length > 0 ? moviesData.value.results : []);
+const movies = ref<Movie[]>([]);
+const totalMovies = computed(() => moviesData.value?.total_results ? new Intl.NumberFormat('en-Us').format(moviesData.value?.total_results) : '0');
 const movieTypesData = ref<MovieTypeData[]>([
   {
     label: 'Now playing',
@@ -27,11 +29,22 @@ const movieTypesData = ref<MovieTypeData[]>([
     selected: false,
   },
 ]);
+const movieTypeSelect = useTemplateRef<HTMLSelectElement>('movieTypeSelect');
 const selectedMovieLabel = computed(() => movieTypesData.value.find(movieType => movieType.selected)?.label);
 
 onMounted(async () => {
   await getMoviesData('now_playing');
+  window.addEventListener('scroll', async () => await loadMoreMovies());
 });
+
+async function loadMoreMovies() {
+  if ((window.innerHeight + y.value) >= document.body.offsetHeight - 32) {
+    const movieTypeValue = movieTypeSelect.value?.value ?? 'now_playing';
+    const language = movieTypeSelect.value?.value ?? 'en-US';
+    const page = moviesData.value?.page ? moviesData.value.page + 1 : 1;
+    await getMoviesData(movieTypeValue, language, page);
+  }
+}
 
 async function handleMovieTypeChange(event: Event) {
   const eventTarget = event.target as HTMLSelectElement;
@@ -42,29 +55,31 @@ async function handleMovieTypeChange(event: Event) {
   movieTypesData.value.forEach((movieTypeData) => {
     movieTypeData.selected = movieTypeData.value === movieTypeValue;
   });
-
+  
+  movies.value = [];
   await getMoviesData(movieTypeValue);
 }
 
-async function getMoviesData(movieTypeValue: string) {
+async function getMoviesData(movieTypeValue: string, language?: string, page?: number) {
   isFetching.value = true;
   try {
     let data;
     switch (movieTypeValue) {
       case 'now_playing':
-        ({ data } = await moviedbApi.getNowPlayingMovies());
+        ({ data } = await moviedbApi.getNowPlayingMovies(language, page));
         break;
       case 'popular':
-        ({ data } = await moviedbApi.getPopularMovies());
+        ({ data } = await moviedbApi.getPopularMovies(language, page));
         break;
       case 'top_rated':
-        ({ data } = await moviedbApi.getTopRatedMovies());
+        ({ data } = await moviedbApi.getTopRatedMovies(language, page));
         break;
       case 'upcoming':
-        ({ data } = await moviedbApi.getUpcomingMovies());
+        ({ data } = await moviedbApi.getUpcomingMovies(language, page));
         break;
     }
     moviesData.value = data?.value;
+    movies.value = [...movies.value, ...(moviesData.value?.results ?? [])];
   }
   catch (error) {
     console.error('Failed to fetch movies:', error);
@@ -77,11 +92,14 @@ async function getMoviesData(movieTypeValue: string) {
 
 <template>
   <div class="flex items-end justify-between mt-4 mb-8">
-    <h1 class="text-4xl font-primary font-extrabold text-delft-blue">
-      {{ selectedMovieLabel }} movies
-    </h1>
+    <div class="flex items-end gap-4">
+      <h1 class="text-4xl font-primary font-extrabold text-delft-blue">
+        {{ selectedMovieLabel }} movies
+      </h1>
+      <AppBadge v-if="totalMovies !== '0'" :label="totalMovies" class="mb-1" />
+    </div>
     <div class="relative w-[18%]">
-      <select class="font-primary rounded-lg block w-full appearance-none bg-vista-blue-light text-van-dyke text-sm px-3.5 py-2 hover:cursor-pointer hover:scale-102 transition-all duration-300" @change="handleMovieTypeChange($event)">
+      <select ref="movieTypeSelect" class="font-primary rounded-lg block w-full appearance-none bg-vista-blue-light text-van-dyke text-sm px-3.5 py-2 hover:cursor-pointer hover:scale-102 transition-all duration-300" @change="handleMovieTypeChange($event)">
         <option v-for="movieType in movieTypesData" :key="movieType.value" :value="movieType.value" :selected="movieType.selected">
           {{ movieType.label }}
         </option>
@@ -94,14 +112,14 @@ async function getMoviesData(movieTypeValue: string) {
     </div>
   </div>
   <div v-if="movies.length > 0" class="grid grid-cols-1 md:grid-cols-3 justify-center gap-5">
-    <div v-if="isFetching" class="flex justify-center items-center col-span-3">
-      <AppSpinnerLoader />
-    </div>
     <MovieCard v-for="movie in movies" :key="movie.id" :movie />
   </div>
-  <div v-else class="mt-14">
+  <div v-else-if="!isFetching" class="mt-14">
     <p class="text-center text-vista-blue">
       No movies found
     </p>
+  </div>
+  <div v-if="isFetching" class="w-full flex justify-center items-center mt-6">
+    <AppSpinnerLoader />
   </div>
 </template>

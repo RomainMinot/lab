@@ -15,21 +15,24 @@ const useMoviesFetch = createFetch({
   },
 });
 
+const defaultLanguage = 'en-US';
+const defaultPage = 1;
+
 export default {
-  getNowPlayingMovies() {
-    return useMoviesFetch('/movie/now_playing').get().json();
+  getNowPlayingMovies(language: string = defaultLanguage, page: number = defaultPage) {
+    return useMoviesFetch(`/movie/now_playing?language=${language}&page=${page}`).get().json();
   },
 
-  getPopularMovies() {
-    return useMoviesFetch('/movie/popular').get().json();
+  getPopularMovies(language: string = defaultLanguage, page: number = defaultPage) {
+    return useMoviesFetch(`/movie/popular?language=${language}&page=${page}`).get().json();
   },
 
-  getTopRatedMovies() {
-    return useMoviesFetch('/movie/top_rated').get().json();
+  getTopRatedMovies(language: string = defaultLanguage, page: number = defaultPage) {
+    return useMoviesFetch(`/movie/top_rated?language=${language}&page=${page}`).get().json();
   },
 
-  getUpcomingMovies() {
-    return useMoviesFetch('/movie/upcoming').get().json();
+  getUpcomingMovies(language: string = defaultLanguage, page: number = defaultPage) {
+    return useMoviesFetch(`/movie/upcoming?language=${language}&page=${page}`).get().json();
   },
 
   getMovie(id: string) {
