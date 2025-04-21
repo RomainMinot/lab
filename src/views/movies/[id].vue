@@ -23,7 +23,7 @@ function sortByOrder(items: CreditsItem[]) {
 
 <template>
   <router-link to="/" class="font-primary text-van-dyke hover:text-van-dyke-light transition-all duration-300'">
-    Go back to popular movies
+    Go back to movies
   </router-link>
   <div class="w-[75%] mx-auto mt-14 grid grid-cols-2 gap-10">
     <div class="flex flex-col gap-3">
