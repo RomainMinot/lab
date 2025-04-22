@@ -1,4 +1,5 @@
 import { createFetch } from '@vueuse/core';
+import { useUserPreferences } from '~/stores/userPreferences';
 
 const useMoviesFetch = createFetch({
   baseUrl: 'https://api.themoviedb.org/3/',
@@ -15,23 +16,27 @@ const useMoviesFetch = createFetch({
   },
 });
 
-const defaultLanguage = 'en-US';
 const defaultPage = 1;
 
+function getDefaultLanguage() {
+  const { defaultLanguage } = storeToRefs(useUserPreferences());
+  return defaultLanguage.value;
+}
+
 export default {
-  getNowPlayingMovies(language: string = defaultLanguage, page: number = defaultPage) {
+  getNowPlayingMovies(language: string = getDefaultLanguage(), page: number = defaultPage) {
     return useMoviesFetch(`/movie/now_playing?language=${language}&page=${page}`).get().json();
   },
 
-  getPopularMovies(language: string = defaultLanguage, page: number = defaultPage) {
+  getPopularMovies(language: string = getDefaultLanguage(), page: number = defaultPage) {
     return useMoviesFetch(`/movie/popular?language=${language}&page=${page}`).get().json();
   },
 
-  getTopRatedMovies(language: string = defaultLanguage, page: number = defaultPage) {
+  getTopRatedMovies(language: string = getDefaultLanguage(), page: number = defaultPage) {
     return useMoviesFetch(`/movie/top_rated?language=${language}&page=${page}`).get().json();
   },
 
-  getUpcomingMovies(language: string = defaultLanguage, page: number = defaultPage) {
+  getUpcomingMovies(language: string = getDefaultLanguage(), page: number = defaultPage) {
     return useMoviesFetch(`/movie/upcoming?language=${language}&page=${page}`).get().json();
   },
 

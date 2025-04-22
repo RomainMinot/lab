@@ -1,47 +1,50 @@
 <script setup lang="ts">
-import type { Movie, MoviesData, MovieTypeData } from '~/types/movie';
+import type { Movie, MovieHomeSection, MovieHomeSectionData, MoviesData } from '~/types/movie';
 import moviedbApi from '~/services/moviedbApi';
+import { useUserPreferences } from '~/stores/userPreferences';
 
 const { y: scrollY } = useWindowScroll();
 const { height: windowHeight } = useWindowSize();
+const { homePageLastType, defaultLanguage } = storeToRefs(useUserPreferences());
+const { setHomePageLastType } = useUserPreferences();
 const isFetching = ref(false);
 const moviesData = ref<MoviesData | undefined>(undefined);
 const movies = ref<Movie[]>([]);
 const totalMovies = computed(() => moviesData.value?.total_results ? new Intl.NumberFormat('en-Us').format(moviesData.value?.total_results) : '0');
-const movieTypesData = ref<MovieTypeData[]>([
+const movieHomeSectionData = ref<MovieHomeSectionData[]>([
   {
     label: 'Now playing',
     value: 'now_playing',
-    selected: true,
   },
   {
     label: 'Popular',
     value: 'popular',
-    selected: false,
   },
   {
     label: 'Top rated',
     value: 'top_rated',
-    selected: false,
   },
   {
     label: 'Upcoming',
     value: 'upcoming',
-    selected: false,
   },
 ]);
-const movieTypeSelect = useTemplateRef<HTMLSelectElement>('movieTypeSelect');
-const selectedMovieLabel = computed(() => movieTypesData.value.find(movieType => movieType.selected)?.label);
+const movieSelectHomeSection = useTemplateRef<HTMLSelectElement>('movieSelectHomeSection');
+const selectedMovieLabel = computed(() => movieHomeSectionData.value.find(movieHomeSection => isSelectedMovieType(movieHomeSection.value))?.label);
 
 onMounted(async () => {
-  await getMoviesData('now_playing');
+  await getMoviesData(homePageLastType.value);
   useEventListener(window, 'scroll', async () => await loadMoreMovies());
 });
 
+function isSelectedMovieType(movieTypeValue: MovieHomeSection) {
+  return movieTypeValue === homePageLastType.value;
+}
+
 async function loadMoreMovies() {
   if ((windowHeight.value + scrollY.value) >= document.body.offsetHeight - 32) {
-    const movieTypeValue = movieTypeSelect.value?.value ?? 'now_playing';
-    const language = movieTypeSelect.value?.value ?? 'en-US';
+    const movieTypeValue = movieSelectHomeSection.value?.value ?? homePageLastType.value;
+    const language = movieSelectHomeSection.value?.value ?? defaultLanguage.value;
     const page = moviesData.value?.page ? moviesData.value.page + 1 : 1;
     await getMoviesData(movieTypeValue, language, page);
   }
@@ -49,15 +52,12 @@ async function loadMoreMovies() {
 
 async function handleMovieTypeChange(event: Event) {
   const eventTarget = event.target as HTMLSelectElement;
-  const movieTypeValue = eventTarget.value;
+  const movieTypeValue = eventTarget.value as MovieHomeSection;
   if (!movieTypeValue)
     return;
 
-  movieTypesData.value.forEach((movieTypeData) => {
-    movieTypeData.selected = movieTypeData.value === movieTypeValue;
-  });
-  
   movies.value = [];
+  setHomePageLastType(movieTypeValue);
   await getMoviesData(movieTypeValue);
 }
 
@@ -100,8 +100,8 @@ async function getMoviesData(movieTypeValue: string, language?: string, page?: n
       <AppBadge v-if="totalMovies !== '0'" :label="totalMovies" class="mb-1" />
     </div>
     <div class="relative w-[18%]">
-      <select ref="movieTypeSelect" class="font-primary rounded-lg block w-full appearance-none bg-vista-blue-light text-van-dyke text-sm px-3.5 py-2 hover:cursor-pointer hover:scale-102 transition-all duration-300" @change="handleMovieTypeChange($event)">
-        <option v-for="movieType in movieTypesData" :key="movieType.value" :value="movieType.value" :selected="movieType.selected">
+      <select ref="movieSelectHomeSection" class="font-primary rounded-lg block w-full appearance-none bg-vista-blue-light text-van-dyke text-sm px-3.5 py-2 hover:cursor-pointer hover:scale-102 transition-all duration-300" @change="handleMovieTypeChange($event)">
+        <option v-for="movieType in movieHomeSectionData" :key="movieType.value" :value="movieType.value" :selected="isSelectedMovieType(movieType.value)">
           {{ movieType.label }}
         </option>
       </select>

@@ -1,3 +1,5 @@
+type MovieHomeSection = 'now_playing' | 'popular' | 'top_rated' | 'upcoming';
+
 interface Genre {
   id: number;
   name: string;
@@ -36,10 +38,9 @@ interface CreditsItem {
   order: number;
 }
 
-interface MovieTypeData {
+interface MovieHomeSectionData {
   label: string;
-  value: string;
-  selected: boolean;
+  value: MovieHomeSection;
 }
 
-export { CreditsItem, Genre, Movie, MoviesData, MovieTypeData };
+export { CreditsItem, Genre, Movie, MovieHomeSection, MovieHomeSectionData, MoviesData };
