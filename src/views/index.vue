@@ -3,14 +3,16 @@ import type { Movie, MovieHomeSection, MovieHomeSectionData, MoviesData } from '
 import moviedbApi from '~/services/moviedbApi';
 import { useUserPreferences } from '~/stores/userPreferences';
 
-const { y: scrollY } = useWindowScroll();
-const { height: windowHeight } = useWindowSize();
 const { homePageLastType, defaultLanguage } = storeToRefs(useUserPreferences());
 const { setHomePageLastType } = useUserPreferences();
+const { y: scrollY } = useWindowScroll();
+const { height: windowHeight } = useWindowSize();
 const isFetching = ref(false);
 const moviesData = ref<MoviesData | undefined>(undefined);
 const movies = ref<Movie[]>([]);
-const totalMovies = computed(() => moviesData.value?.total_results ? new Intl.NumberFormat('en-Us').format(moviesData.value?.total_results) : '0');
+const totalMovies = computed(() => {
+  return moviesData.value?.total_results ? new Intl.NumberFormat(defaultLanguage.value).format(moviesData.value?.total_results) : '0'
+});
 const movieHomeSectionData = ref<MovieHomeSectionData[]>([
   {
     label: 'Now playing',
@@ -30,7 +32,9 @@ const movieHomeSectionData = ref<MovieHomeSectionData[]>([
   },
 ]);
 const movieSelectHomeSection = useTemplateRef<HTMLSelectElement>('movieSelectHomeSection');
-const selectedMovieLabel = computed(() => movieHomeSectionData.value.find(movieHomeSection => isSelectedMovieType(movieHomeSection.value))?.label);
+const selectedMovieLabel = computed(() => {
+  return movieHomeSectionData.value.find(movieHomeSection => isSelectedMovieType(movieHomeSection.value))?.label
+});
 
 onMounted(async () => {
   await getMoviesData(homePageLastType.value);

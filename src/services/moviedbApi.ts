@@ -40,15 +40,15 @@ export default {
     return useMoviesFetch(`/movie/upcoming?language=${language}&page=${page}`).get().json();
   },
 
-  getMovie(id: string) {
-    return useMoviesFetch(`/movie/${id}`).get().json();
+  getMovie(id: string, language: string = getDefaultLanguage()) {
+    return useMoviesFetch(`/movie/${id}?language=${language}`).get().json();
   },
 
-  getGenre(id: string) {
-    return useMoviesFetch(`/genre/${id}`).get().json();
+  getGenre(id: string, language: string = getDefaultLanguage()) {
+    return useMoviesFetch(`/genre/${id}?language=${language}`).get().json();
   },
 
-  getCredits(id: string) {
-    return useMoviesFetch(`/movie/${id}/credits`).get().json();
+  getCredits(id: string, language: string = getDefaultLanguage()) {
+    return useMoviesFetch(`/movie/${id}/credits?language=${language}`).get().json();
   },
 };
