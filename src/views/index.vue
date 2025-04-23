@@ -11,7 +11,7 @@ const isFetching = ref(false);
 const moviesData = ref<MoviesData | undefined>(undefined);
 const movies = ref<Movie[]>([]);
 const totalMovies = computed(() => {
-  return moviesData.value?.total_results ? new Intl.NumberFormat(defaultLanguage.value).format(moviesData.value?.total_results) : '0'
+  return moviesData.value?.total_results ? new Intl.NumberFormat(defaultLanguage.value).format(moviesData.value?.total_results) : '0';
 });
 const movieHomeSectionData = ref<MovieHomeSectionData[]>([
   {
@@ -33,7 +33,7 @@ const movieHomeSectionData = ref<MovieHomeSectionData[]>([
 ]);
 const movieSelectHomeSection = useTemplateRef<HTMLSelectElement>('movieSelectHomeSection');
 const selectedMovieLabel = computed(() => {
-  return movieHomeSectionData.value.find(movieHomeSection => isSelectedMovieType(movieHomeSection.value))?.label
+  return movieHomeSectionData.value.find(movieHomeSection => isSelectedMovieType(movieHomeSection.value))?.label;
 });
 
 onMounted(async () => {
