@@ -96,14 +96,14 @@ async function getMoviesData(movieTypeValue: string, language?: string, page?: n
 </script>
 
 <template>
-  <div class="flex items-end justify-between mt-4 mb-8">
-    <div class="flex items-end gap-4">
-      <h1 class="text-4xl font-primary font-extrabold text-delft-blue">
+  <div class="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 md:gap-0 mt-0 md:mt-4 mb-8">
+    <div class="flex items-end justify-between w-full md:w-auto gap-4">
+      <h1 class="text-2xl md:text-4xl font-primary font-extrabold text-delft-blue">
         {{ selectedMovieLabel }} movies
       </h1>
-      <AppBadge v-if="totalMovies !== '0'" :label="totalMovies" class="mb-1" />
+      <AppBadge v-if="totalMovies !== '0'" :label="totalMovies" class="mb-0.5 md:mb-1" />
     </div>
-    <div class="relative w-[18%]">
+    <div class="relative w-full md:w-[18%]">
       <select ref="movieSelectHomeSection" class="font-primary rounded-lg block w-full appearance-none bg-vista-blue-light text-van-dyke text-sm px-3.5 py-2 hover:cursor-pointer hover:scale-102 transition-all duration-300" @change="handleMovieTypeChange($event)">
         <option v-for="movieType in movieHomeSectionData" :key="movieType.value" :value="movieType.value" :selected="isSelectedMovieType(movieType.value)">
           {{ movieType.label }}

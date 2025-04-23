@@ -25,10 +25,10 @@ function sortByOrder(items: CreditsItem[]) {
   <router-link to="/" class="font-primary text-van-dyke hover:text-van-dyke-light transition-all duration-300'">
     Go back to movies
   </router-link>
-  <div class="w-[75%] mx-auto mt-14 grid grid-cols-2 gap-10">
-    <div class="flex flex-col gap-3">
+  <div class="w-full md:w-[75%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 mt-10 md:mt-14 md:gap-10 mb-10 md:mb-0">
+    <div class="flex flex-col gap-3 order-2 md:order-1">
       <div class="flex flex-row items-end justify-between gap-2">
-        <h1 class="text-3xl font-primary font-extrabold text-delft-blue">
+        <h1 class="text-2xl md:text-3xl font-primary font-extrabold text-delft-blue">
           {{ movie.title }} ({{ releaseYear }})
         </h1>
         <CardSubtext :text="runtime" font-size="text-sm" class="whitespace-nowrap" />
@@ -46,6 +46,6 @@ function sortByOrder(items: CreditsItem[]) {
         Crew
       </MovieCreditsList>
     </div>
-    <img :src="posterUrl" :alt="movie.original_title" class="rounded-2xl object-cover object-top">
+    <img :src="posterUrl" :alt="movie.original_title" class="rounded-2xl object-cover object-top order-1 md:order-2">
   </div>
 </template>

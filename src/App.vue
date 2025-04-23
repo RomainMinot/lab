@@ -1,6 +1,6 @@
 <template>
   <Suspense>
-    <main class="md:p-8 p-4">
+    <main class="p-6 md:p-8">
       <RouterView />
     </main>
   </Suspense>

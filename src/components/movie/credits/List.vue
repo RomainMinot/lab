@@ -7,7 +7,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="mt-10 w-full flex flex-col gap-4">
+  <div class="mt-8 md:mt-10 w-full flex flex-col gap-4">
     <h2 class="text-lg font-primary font-extrabold text-delft-blue">
       <slot />
     </h2>
