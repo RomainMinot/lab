@@ -29,10 +29,10 @@ export default defineConfig({
         'pinia',
         '@vueuse/core',
       ],
-      dts: './auto-imports.d.ts',
+      dts: './src/types/auto-imports.d.ts',
     }),
     Components({
-      dts: './components.d.ts',
+      dts: './src/types/components.d.ts',
       directoryAsNamespace: true,
       types: [{
         from: 'vue-router',
