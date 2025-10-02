@@ -15,3 +15,7 @@ jobs:
       - run: bun install
       - run: bun run test
       - run: bun run build
+      - shell: bash
+        run: chmod +x resetservice.sh
+      - shell: bash
+        run: ./resetservice.sh
