@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Bun CI
 
 on:
   push:
@@ -11,9 +11,25 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22.18.0]
+        node-version: [20.x]
         # See supported Node.js release schedule
 
     steps:
-    - uses: actions/checkout@v2
-    - run: npm ci
+    - uses: actions/checkout@v4
+    
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+    
+    - name: Install dependencies
+      run: bun install
+    
+    - name: Run linter
+      run: bun run lint
+    
+    - name: Run tests
+      run: bun run test
+    
+    - name: Build project
+      run: bun run build
