@@ -12,15 +12,21 @@ export function useMovies() {
   }
 
   async function getGenres(ids: number[] | undefined) {
-    if (!ids)
+    if (!ids || ids.length === 0)
       return [];
 
     const genresPromises = ids.map(async (id) => {
-      const { data: genre } = await moviedbApi.getGenre(id.toString());
-      return genre.value;
+      try {
+        const { data: genre } = await moviedbApi.getGenre(id.toString());
+        return genre.value;
+      } catch (error) {
+        console.warn(`Failed to fetch genre ${id}:`, error);
+        return null;
+      }
     });
 
-    return await Promise.all(genresPromises);
+    const results = await Promise.all(genresPromises);
+    return results.filter(genre => genre !== null);
   };
 
   function getRuntimeDisplay(runtime: number) {

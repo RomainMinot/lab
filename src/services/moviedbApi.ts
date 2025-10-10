@@ -6,8 +6,14 @@ const useMoviesFetch = createFetch({
   options: {
     async beforeFetch({ options }) {
       options.headers = new Headers(options.headers || {});
-      options.headers.set('Authorization', `Bearer ${import.meta.env.VITE_MOVIE_API_TOKEN}`);
-
+      
+      const apiToken = import.meta.env.VITE_MOVIE_API_TOKEN;
+      if (!apiToken) {
+        console.warn('VITE_MOVIE_API_TOKEN is not set. API calls will fail.');
+        throw new Error('Movie API token is not configured');
+      }
+      
+      options.headers.set('Authorization', `Bearer ${apiToken}`);
       return { options };
     },
   },

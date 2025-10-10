@@ -8,7 +8,7 @@ import Pages from 'vite-plugin-pages';
 import vueDevTools from 'vite-plugin-vue-devtools';
 
 export default defineConfig({
-  base: './',
+  base: '/',
   resolve: {
     alias: {
       '@/': `${path.resolve(__dirname, ``)}/`,
